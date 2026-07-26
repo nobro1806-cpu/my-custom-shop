@@ -1,12 +1,18 @@
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
+const path = require('path');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
+
+// Мидлвары для обработки JSON и CORS
 app.use(cors());
 app.use(express.json());
+
+// Настройка раздачи статических файлов фронтенда из папки client
+app.use(express.static(path.join(__dirname, '../client')));
 
 // Настройка Cloudinary через переменные окружения
 cloudinary.config({
@@ -15,17 +21,17 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Настройка хранилища Multer для загрузки напрямую в Cloudinary
+// Хранилище Multer для прямой загрузки файлов в Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'velix_drop_products', // Название папки в Cloudinary
+    folder: 'velix_drop_products', // Папка в Cloudinary
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp']
   }
 });
 const upload = multer({ storage });
 
-// Категории
+// Базовые категории
 const categories = [
   { id: 'all', name: 'Все товары' },
   { id: 't-shirts', name: 'Футболки' },
@@ -36,6 +42,7 @@ const categories = [
   { id: 'sneakers', name: 'Кроссовки' }
 ];
 
+// Массив товаров в памяти
 let products = [
   { 
     id: 1, 
@@ -46,29 +53,41 @@ let products = [
   }
 ];
 
-// Пароль администратора берется из переменных окружения
+// Пароль админа из переменных окружения
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'default_admin_pass';
 
+// --- МАРШРУТЫ ФРОНТЕНДА ---
+
+// Главная страница
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/index.html'));
+});
+
+// --- API МАРШРУТЫ ---
+
+// Получить категории
 app.get('/api/categories', (req, res) => {
   res.json(categories);
 });
 
+// Получить товары
 app.get('/api/products', (req, res) => {
   res.json(products);
 });
 
+// Добавить новый товар
 app.post('/api/products', upload.single('image'), (req, res) => {
   const { title, price, category, password } = req.body;
 
   if (password !== ADMIN_PASSWORD) {
-    return res.status(403).json({ error: 'Неверный пароль!' });
+    return res.status(403).json({ error: 'Неверный пароль администратора!' });
   }
 
   if (!title || !price || !category) {
-    return res.status(400).json({ error: 'Заполните все поля' });
+    return res.status(400).json({ error: 'Заполните все обязательные поля' });
   }
 
-  // Ссылка на фото из Cloudinary возвращается в req.file.path
+  // URL загруженного изображения из Cloudinary
   const imgUrl = req.file ? req.file.path : 'https://via.placeholder.com/300';
 
   const newProduct = {
@@ -83,17 +102,21 @@ app.post('/api/products', upload.single('image'), (req, res) => {
   res.status(201).json(newProduct);
 });
 
+// Удалить товар по ID
 app.delete('/api/products/:id', (req, res) => {
   const { password } = req.body;
   const productId = Number(req.params.id);
 
   if (password !== ADMIN_PASSWORD) {
-    return res.status(403).json({ error: 'Неверный пароль!' });
+    return res.status(403).json({ error: 'Неверный пароль администратора!' });
   }
 
   products = products.filter(p => p.id !== productId);
-  res.json({ success: true, message: 'Товар удален' });
+  res.json({ success: true, message: 'Товар успешно удален' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+// Запуск сервера
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`🚀 Сервер успешно запущен на порту ${PORT}`);
+});
