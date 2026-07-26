@@ -4,494 +4,102 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VELIX.DROP — Каталог</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg-dark: #0b0f19;
-      --card-bg: rgba(18, 24, 38, 0.75);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --accent: #38bdf8;
-      --green: #22c55e;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --radius: 18px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      background-color: var(--bg-dark);
-    }
-
-    /* ФОН С ФОТО И РАЗМЫТИЕМ */
-    .bg-fixed {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: url('bg.jpg') center/cover no-repeat;
-      filter: blur(22px) brightness(0.3);
-      transform: scale(1.1);
-      z-index: -1;
-    }
-
-    /* СЕРО-ТЕМНЫЙ САЙДБАР */
-    aside {
-      width: 280px;
-      background: rgba(18, 18, 22, 0.82);
-      backdrop-filter: blur(20px);
-      border-right: 1px solid var(--card-border);
-      padding: 2rem 1.2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.8rem;
-      position: fixed;
-      height: 100vh;
-      top: 0; left: 0;
-      z-index: 50;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
-
-    .brand-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      object-fit: cover;
-      border: 1px solid var(--card-border);
-    }
-
-    .brand-title {
-      font-weight: 800;
-      font-size: 1.15rem;
-      letter-spacing: -0.5px;
-      color: #fff;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 0.75rem 0.9rem;
-      border-radius: 12px;
-      border: 1px solid var(--card-border);
-      background: rgba(0, 0, 0, 0.3);
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.88rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .search-box input:focus { border-color: var(--accent); }
-
-    .menu-title {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-      font-weight: 700;
-    }
-
-    /* Кнопки категорий */
-    .category-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .cat-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-muted);
-      padding: 0.65rem 0.9rem;
-      border-radius: 10px;
-      text-align: left;
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .cat-btn:hover {
-      background: rgba(255, 255, 255, 0.05);
-      color: #fff;
-    }
-
-    .cat-btn.active {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      border-color: var(--card-border);
-    }
-
-    .cart-btn-sidebar {
-      background: var(--accent);
-      color: #000;
-      border: none;
-      padding: 0.85rem;
-      border-radius: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .badge {
-      background: #000;
-      color: #fff;
-      padding: 0.15rem 0.5rem;
-      border-radius: 20px;
-      font-size: 0.78rem;
-    }
-
-    /* ОСНОВНОЙ КОНТЕНТ */
-    main {
-      margin-left: 280px;
-      flex: 1;
-      padding: 2.5rem 2rem;
-      max-width: 1200px;
-    }
-
-    .hero-header h1 {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 0.4rem;
-    }
-
-    .hero-header p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 2rem;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.4rem;
-    }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 1.1rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .img-wrapper {
-      width: 100%;
-      height: 190px;
-      border-radius: calc(var(--radius) - 6px);
-      overflow: hidden;
-      margin-bottom: 0.9rem;
-      background: rgba(0,0,0,0.3);
-    }
-
-    .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-
-    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
-
-    .price { font-size: 1.2rem; font-weight: 800; color: var(--accent); margin-bottom: 0.9rem; }
-
-    .add-btn {
-      width: 100%;
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border: 1px solid var(--card-border);
-      padding: 0.75rem;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .add-btn:hover { background: var(--accent); color: #000; }
-
-    /* МОДАЛКА КОРЗИНЫ */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(8px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 200;
-      padding: 1rem;
-    }
-
-    .modal {
-      background: rgba(20, 24, 33, 0.95);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 450px;
-      padding: 1.5rem;
-    }
-
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    .whatsapp-btn {
-      width: 100%;
-      background: var(--green);
-      color: #fff;
-      border: none;
-      padding: 0.9rem;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 800;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-
-    @media (max-width: 768px) {
-      body { flex-direction: column; }
-      aside { width: 100%; height: auto; position: relative; border-right: none; }
-      main { margin-left: 0; padding: 1.5rem 1rem; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="bg-fixed"></div>
-
-  <!-- Сайдбар -->
-  <aside>
-    <div class="brand">
-      <img src="bg.jpg" alt="Logo" class="brand-avatar">
-      <div class="brand-title">VELIX.DROP</div>
+  <header class="header">
+    <div class="logo">
+      <img src="https://via.placeholder.com/40" alt="Logo">
+      <span>VELIX.DROP</span>
     </div>
-
-    <div class="search-box">
-      <div class="menu-title">Поиск</div>
-      <input type="text" id="search" placeholder="Название товара..." oninput="applyFilters()">
+    <div class="header-actions">
+      <button id="adminLoginBtn" class="btn-secondary">Вход</button>
+      <button id="cartBtn" class="btn-primary">Корзина <span id="cartCount">0</span></button>
     </div>
+  </header>
 
-    <div>
-      <div class="menu-title">Каталог</div>
-      <div class="category-list" id="category-list">Загрузка...</div>
-    </div>
+  <div class="container">
+    <aside class="sidebar">
+      <h3>ПОИСК</h3>
+      <input type="text" id="searchInput" placeholder="Название товара...">
+      
+      <h3>КАТАЛОГ</h3>
+      <ul id="categoriesList" class="categories-list">
+        <li class="loading">Загрузка...</li>
+      </ul>
+    </aside>
 
-    <div style="margin-top: auto;">
-      <button class="cart-btn-sidebar" onclick="toggleCart()">
-        <span>🛒 Корзина</span>
-        <span class="badge" id="cart-count">0</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- Основная область -->
-  <main>
-    <div class="hero-header">
-      <h1 id="category-heading">Все товары</h1>
-      <p>Оформление заказа напрямую через WhatsApp</p>
-    </div>
-
-    <div class="products-grid" id="products">Загрузка...</div>
-  </main>
-
-  <!-- Корзина -->
-  <div class="modal-overlay" id="cart-modal">
-    <div class="modal">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-        <h2>Корзина</h2>
-        <button onclick="toggleCart()" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+    <main class="content">
+      <div class="content-header">
+        <h1 id="categoryTitle">Все товары</h1>
+        <p>Оформление заказа напрямую через WhatsApp</p>
       </div>
 
-      <div id="cart-items" style="max-height: 280px; overflow-y: auto;"></div>
+      <div id="errorMessage" class="error-msg hidden"></div>
+      
+      <div id="productsGrid" class="products-grid">
+        <!-- Товары загружаются динамически -->
+      </div>
+    </main>
+  </div>
 
-      <div style="margin-top: 1.2rem; border-top: 1px solid var(--card-border); padding-top: 1rem;">
-        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.15rem;">
-          <span>Итого:</span>
-          <span id="total-sum" style="color:var(--accent);">0 сом</span>
-        </div>
-        <button class="whatsapp-btn" onclick="checkoutWhatsApp()">
-          💬 Заказать через WhatsApp
-        </button>
+  <!-- Модальное окно ввода пароля -->
+  <div id="authModal" class="modal hidden">
+    <div class="modal-content auth-box">
+      <h2>Вход в панель админа</h2>
+      <p>Введите пароль администратора:</p>
+      <input type="password" id="adminPasswordInput" placeholder="Пароль...">
+      <div id="authError" class="auth-error hidden">Неверный пароль!</div>
+      <div class="modal-actions">
+        <button id="submitPasswordBtn" class="btn-primary">Войти</button>
+        <button id="closeAuthBtn" class="btn-secondary">Отмена</button>
       </div>
     </div>
   </div>
 
-  <script>
-    const API_URL = 'http://localhost:3000/api';
-    const PHONE_NUMBER = '996XXXXXXXXX'; // Укажи номер владельца в международном формате
+  <!-- Модальное окно Админ-Панели -->
+  <div id="adminPanelModal" class="modal hidden">
+    <div class="modal-content admin-box">
+      <div class="admin-header">
+        <h2>Управление товарами</h2>
+        <button id="closeAdminBtn" class="btn-close">&times;</button>
+      </div>
 
-    let cart = [];
-    let allProducts = [];
-    let categories = [];
-    let activeCategory = 'all';
+      <!-- Форма добавления -->
+      <form id="addProductForm" class="admin-form">
+        <h3>Добавить новый товар</h3>
+        <input type="text" id="newTitle" placeholder="Название товара" required>
+        <input type="number" id="newPrice" placeholder="Цена (руб)" required>
+        
+        <select id="newCategory" required>
+          <option value="">Выберите категорию</option>
+          <option value="t-shirts">Футболки</option>
+          <option value="longsleeves">Лонгсливы</option>
+          <option value="jeans">Джинсы</option>
+          <option value="pants">Штаны</option>
+          <option value="shorts">Шорты</option>
+          <option value="sneakers">Кроссовки</option>
+        </select>
 
-    async function init() {
-      await loadCategories();
-      await loadProducts();
-    }
+        <label class="file-label">
+          <span>Выберите фото товара:</span>
+          <input type="file" id="newImage" accept="image/*" required>
+        </label>
 
-    async function loadCategories() {
-      try {
-        const res = await fetch(`${API_URL}/categories`);
-        categories = await res.json();
-        const list = document.getElementById('category-list');
-        list.innerHTML = '';
+        <button type="submit" class="btn-primary">Загрузить товар</button>
+      </form>
 
-        categories.forEach(c => {
-          const btn = document.createElement('button');
-          btn.className = `cat-btn ${c.id === activeCategory ? 'active' : ''}`;
-          btn.innerText = c.name;
-          btn.onclick = () => selectCategory(c.id, c.name);
-          list.appendChild(btn);
-        });
-      } catch (e) {
-        console.error('Ошибка категорий');
-      }
-    }
+      <hr>
 
-    function selectCategory(id, name) {
-      activeCategory = id;
-      document.getElementById('category-heading').innerText = name;
-      
-      document.querySelectorAll('.cat-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.innerText === name);
-      });
+      <!-- Список товаров для удаления -->
+      <h3>Удаление товаров</h3>
+      <div id="adminProductsList" class="admin-products-list">
+        <!-- Список загружается скриптом -->
+      </div>
+    </div>
+  </div>
 
-      applyFilters();
-    }
-
-    async function loadProducts() {
-      try {
-        const res = await fetch(`${API_URL}/products`);
-        allProducts = await res.json();
-        applyFilters();
-      } catch (err) {
-        document.getElementById('products').innerText = 'Ошибка загрузки каталога';
-      }
-    }
-
-    function applyFilters() {
-      const searchVal = document.getElementById('search').value.toLowerCase();
-      
-      const filtered = allProducts.filter(p => {
-        const matchesCategory = activeCategory === 'all' || p.category === activeCategory;
-        const matchesSearch = p.title.toLowerCase().includes(searchVal);
-        return matchesCategory && matchesSearch;
-      });
-
-      renderProducts(filtered);
-    }
-
-    function renderProducts(list) {
-      const container = document.getElementById('products');
-      container.innerHTML = '';
-
-      if (list.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted)">В этой категории нет товаров</p>';
-        return;
-      }
-
-      list.forEach(p => {
-        container.innerHTML += `
-          <div class="card">
-            <div>
-              <div class="img-wrapper">
-                <img src="${p.img}" alt="${p.title}">
-              </div>
-              <div class="card-title">${p.title}</div>
-            </div>
-            <div>
-              <div class="price">${p.price.toLocaleString()} сом</div>
-              <button class="add-btn" onclick="addToCart(${p.id})">+ В корзину</button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function addToCart(id) {
-      const product = allProducts.find(p => p.id === id);
-      if (product) {
-        cart.push(product);
-        updateCartUI();
-      }
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      updateCartUI();
-    }
-
-    function updateCartUI() {
-      document.getElementById('cart-count').innerText = cart.length;
-      const itemsContainer = document.getElementById('cart-items');
-      itemsContainer.innerHTML = '';
-
-      let total = 0;
-      if (cart.length === 0) {
-        itemsContainer.innerHTML = '<p style="color:var(--text-muted); text-align:center;">Корзина пуста</p>';
-      } else {
-        cart.forEach((item, index) => {
-          total += item.price;
-          itemsContainer.innerHTML += `
-            <div class="cart-item">
-              <div>
-                <div style="font-weight:600">${item.title}</div>
-                <div style="color:var(--accent); font-size:0.85rem">${item.price.toLocaleString()} сом</div>
-              </div>
-              <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold;">Удалить</button>
-            </div>
-          `;
-        });
-      }
-
-      document.getElementById('total-sum').innerText = total.toLocaleString() + ' сом';
-    }
-
-    function toggleCart() {
-      const modal = document.getElementById('cart-modal');
-      modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-    }
-
-    function checkoutWhatsApp() {
-      if (cart.length === 0) return alert('Корзина пуста!');
-
-      let msg = "Здравствуйте! Заказ из VELIX.DROP:\n\n";
-      let total = 0;
-
-      cart.forEach((item, i) => {
-        msg += `${i + 1}. ${item.title} — ${item.price.toLocaleString()} сом\n`;
-        total += item.price;
-      });
-
-      msg += `\n*Итого:* ${total.toLocaleString()} сом`;
-      window.open(`https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    init();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
